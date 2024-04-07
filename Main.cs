@@ -29,8 +29,6 @@ public class Main : MonoBehaviour
     {
 
         DateTime localDate = DateTime.Now;
-        //mIf.text = localDate.ToString();
-        //mIf.text = result1.ToString();
         TimeSpan deltaTime = result1 - localDate;
         mIf.text = deltaTime.Minutes.ToString() + " m " + deltaTime.Seconds.ToString() + " s";
         //public Camera cam;
