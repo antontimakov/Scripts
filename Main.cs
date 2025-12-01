@@ -1,3 +1,4 @@
+// Main.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,41 +8,80 @@ using System.Net.Http;
 using System;
 using System.Globalization;
 using System.Diagnostics;
+using MyProject.Models;
 
 public class Main : MonoBehaviour
 {
-
+    /// <summary>
+    /// Ссылка на основнное статическое поле для ввода
+    /// </summary>
     InputField mIf;
+
+    /// <summary>
+    /// Ссылка на основную кнопку
+    /// </summary>
     Button mB;
+
+    /// <summary>
+    /// Хранит дату и время для результата
+    /// </summary>
     DateTime result1;
-    DragAndDrop dad; // = new DragAndDrop(this);
 
-    Main()
-    {
-        dad = new DragAndDrop(this);
-    }
+    /// <summary>
+    /// Экземпляр класса DragAndDrop
+    /// </summary>
+    DragAndDrop dad;
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// (Unity) Выполняет действия до обновления первого кадра
+    /// </summary>
     void Start()
     {
-        mIf = GameObject.Find("MainIf").GetComponent<InputField>();
-        mB = GameObject.Find("MainButton").GetComponent<Button>();
-        mB.onClick.AddListener(Bc);
-
-        multyObj(GameObject.Find("grass"));
-        multyObj(GameObject.Find("ground"));
+        initVars();
+        drowField();
     }
 
+    /// <summary>
+    /// Инициализация переменных
+    /// </summary>
+    private void initVars()
+    {
+        dad = new DragAndDrop(this);
+        mIf = GameObject.Find("MainIf").GetComponent<InputField>();
+        mB = GameObject.Find("MainButton").GetComponent<Button>();
+        mB.onClick.AddListener(startSetText);
+        result1 = DateTime.Now;
+    }
+
+    /// <summary>
+    /// Отрисовка поля
+    /// </summary>
+    private void drowField()
+    {
+        reppeatRight(GameObject.Find("grass"), 10);
+        reppeatRight(GameObject.Find("ground"), 10);
+    }
+
+    /// <summary>
+    /// Заменяет указанный объект новым
+    /// </summary>
+    /// <param name="goNew">Заменяющий объект</param>
+    /// <param name="goOld">Заменяемый объект</param>
     public void chObj(GameObject goNew, GameObject goOld)
     {
         Instantiate(goNew, goOld.transform.position, Quaternion.identity);
         Destroy(goOld);
     }
 
-    public void multyObj(GameObject go)
+    /// <summary>
+    /// Повторяет переданный объект указанное кол-во раз
+    /// </summary>
+    /// <param name="go">Объект для повторения</param>
+    /// <param name="nom">кол-во повторений</param>
+    public void reppeatRight(GameObject go, int nom)
     {
         Vector2 offset = go.transform.position;
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < nom; i++)
         {
             Vector2 offset2 = offset;
             offset2.x = offset.x + i * 2;
@@ -49,28 +89,30 @@ public class Main : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// (Unity) Вызывается при каждом обновлении кадра
+    /// </summary>
     void Update()
     {
-
         DateTime localDate = DateTime.Now;
         TimeSpan deltaTime = result1 - localDate;
         mIf.text = deltaTime.Minutes.ToString() + " m " + deltaTime.Seconds.ToString() + " s";
         dad.Action();
-        //public Camera cam;
-        //if (Input.GetMouseButton(0))
-        //{
-        //    Camera.main.fieldOfView = 30;
-        //}
     }
 
-    public void Bc()
+    /// <summary>
+    /// Запускает заполнение текстового поля в зависимости от платформы
+    /// </summary>
+    public void startSetText()
     {
-        // web
-        //StartCoroutine(GetText());
-
-        // decktop
-        GetTextDesc();
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+            StartCoroutine(GetText());
+        }
+        else
+        {
+            getFromServerWin();
+        }
     }
 
     IEnumerator GetText()
@@ -94,144 +136,26 @@ public class Main : MonoBehaviour
             //byte[] results = www.downloadHandler.data;
         }
     }
-    private async void GetTextDesc()
-    {
 
+    /// <summary>
+    /// Получает данные с сервера (Windows)
+    /// </summary>
+    private async void getFromServerWin()
+    {
         using HttpClient client = new();
         using HttpResponseMessage result = await client.GetAsync("http://192.168.1.199:5074/getdb");
         resultToResultClass(await result.Content.ReadAsStringAsync());
     }
+
+    /// <summary>
+    /// Устанавливает полученное с сервера значение в поле
+    /// </summary>
     private void resultToResultClass(String resultFromServer)
     {
-        UnityEngine.Debug.Log(resultFromServer);
         ResultClass myObject;
         myObject = JsonUtility.FromJson<ResultClass>(resultFromServer);
         mIf.text = myObject.time_fishing;
         string format = "yyyy-MM-dd\\THH:mm:ss.fffff";
         result1 = DateTime.ParseExact(myObject.time_fishing, format, CultureInfo.InvariantCulture);
-        UnityEngine.Debug.Log(result1);
-    }
-}
-
-public class ResultClass
-{
-    public int? did = null;
-    public string? time_fishing = null; // DateTime
-}
-
-
-class DragAndDrop
-{
-
-    State state;
-    GameObject item;
-    Vector2 offset;
-    Vector2 nullVector;
-    Vector2 offsetCell;
-    Main mainOo;
-
-    public DragAndDrop(Main mainO)
-    {
-        state = State.none;
-        item = null;
-        nullVector = new Vector2(-3.43f, 4.2f);
-        offsetCell = new Vector2(1.1f, -1.1f);
-        mainOo = mainO;
-    }
-    public void Action()
-    {
-        switch (state)
-        {
-            case State.none:
-                if (isMouseButtonPressed())
-                {
-                    pickup();
-                }
-                break;
-
-            case State.drag:
-                if (isMouseButtonPressed())
-                {
-                    drag();
-                }
-                else
-                {
-                    drop();
-                }
-                break;
-        }
-    }
-
-    bool isMouseButtonPressed()
-    {
-        return Input.GetMouseButton(0);
-    }
-
-    Vector2 getClickPosition()
-    {
-        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    }
-
-    Transform GetItemAt(Vector2 position)
-    {
-        RaycastHit2D[] figuries = Physics2D.RaycastAll(position, position, 1f);
-        if (figuries.Length > 0)
-        {
-            return figuries[0].transform;
-        }
-        return null;
-    }
-    void pickup()
-    {
-        Vector2 clickPosition = getClickPosition();
-        Transform clickedItem = GetItemAt(clickPosition);
-        if (clickedItem == null)
-        {
-            return;
-        }
-        item = clickedItem.gameObject;
-        //UnityEngine.Debug.Log(item.name);
-        offset = (Vector2)clickedItem.position - clickPosition;
-        state = State.drag;
-    }
-
-    void drag()
-    {
-        item.transform.position = getClickPosition() + offset;
-    }
-    void drop()
-    {
-        item.transform.position = calcCellPosition(getClickPosition());
-        item = null;
-        mainOo.chObj(GameObject.Find("grass"), GameObject.Find("ground"));
-        state = State.none;
-    }
-
-    Vector2 calcCellPosition(Vector2 ItemPosition)
-    {
-        // было
-        //return ItemPosition + offset;
-        Vector2 cp = getClickPosition();
-        Vector2 res = nullVector;
-        for (int i = 0; i < 7; ++i)
-        {
-            if (cp.x > (res.x/* + offset.x*/))
-            {
-                res.x += offsetCell.x;
-            }
-            if (cp.y < (res.y/* + offset.y*/))
-            {
-                res.y += offsetCell.y;
-            }
-        }
-        return res;
-    }
-
-    enum State
-    {
-        none,
-        //pick,
-        drag//,
-        //drop
     }
 }
