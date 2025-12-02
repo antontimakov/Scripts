@@ -15,7 +15,7 @@ class DragAndDrop
     {
         state = State.none;
         item = null;
-        nullVector = new Vector2(-3.43f, 4.2f);
+        nullVector = Camera.main.ScreenToWorldPoint(new Vector2(0f, Screen.height));
         offsetCell = new Vector2(1.1f, -1.1f);
         mainOo = mainO;
     }
@@ -82,9 +82,16 @@ class DragAndDrop
     }
     void drop()
     {
-        item.transform.position = calcCellPosition(getClickPosition());
+        // помещает элемент в верхний левый угол
+        BoxCollider2D boxCollider = item.GetComponent<BoxCollider2D>();
+        float height = boxCollider.size.y * item.transform.localScale.y;
+        float width = boxCollider.size.x * item.transform.localScale.x;
+        nullVector.y -= height / 2;
+        nullVector.x += width / 2;
+        item.transform.position = nullVector;
+        /*item.transform.position = calcCellPosition(getClickPosition());
         item = null;
-        mainOo.chObj(GameObject.Find("grass"), GameObject.Find("ground"));
+        mainOo.chObj(GameObject.Find("grass"), GameObject.Find("ground"));*/
         state = State.none;
     }
 

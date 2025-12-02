@@ -33,6 +33,11 @@ public class Main : MonoBehaviour
     DragAndDrop dad;
 
     /// <summary>
+    /// Путь к серверу
+    /// </summary>
+    string serverUrl;
+
+    /// <summary>
     /// (Unity) Выполняет действия до обновления первого кадра
     /// </summary>
     void Start()
@@ -51,6 +56,7 @@ public class Main : MonoBehaviour
         mB = GameObject.Find("MainButton").GetComponent<Button>();
         mB.onClick.AddListener(startSetText);
         result1 = DateTime.Now;
+        serverUrl = "http://192.168.1.199:5074/getdb";
     }
 
     /// <summary>
@@ -117,7 +123,7 @@ public class Main : MonoBehaviour
 
     IEnumerator GetText()
     {
-        UnityWebRequest www = new UnityWebRequest("http://192.168.1.199:5074/getdb");
+        UnityWebRequest www = new UnityWebRequest(serverUrl);
         www.downloadHandler = new DownloadHandlerBuffer();
         yield return www.SendWebRequest();
 
@@ -128,12 +134,7 @@ public class Main : MonoBehaviour
         }
         else
         {
-            // Show results as text
-            UnityEngine.Debug.Log(www.downloadHandler.text);
             resultToResultClass(www.downloadHandler.text);
-
-            // Or retrieve results as binary data
-            //byte[] results = www.downloadHandler.data;
         }
     }
 
@@ -143,7 +144,7 @@ public class Main : MonoBehaviour
     private async void getFromServerWin()
     {
         using HttpClient client = new();
-        using HttpResponseMessage result = await client.GetAsync("http://192.168.1.199:5074/getdb");
+        using HttpResponseMessage result = await client.GetAsync(serverUrl);
         resultToResultClass(await result.Content.ReadAsStringAsync());
     }
 
