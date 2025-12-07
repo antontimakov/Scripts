@@ -10,6 +10,7 @@ class DragAndDrop
     Vector2 nullVector;
     Vector2 offsetCell;
     Main mainOo;
+    float cellSize = 2f; // размер клетки
 
     public DragAndDrop(Main mainO)
     {
@@ -88,7 +89,7 @@ class DragAndDrop
         float width = boxCollider.size.x * item.transform.localScale.x;
         nullVector.y -= height / 2;
         nullVector.x += width / 2;
-        item.transform.position = nullVector;
+        item.transform.position = getNearestCell(item.transform.position); //nullVector;
         /*item.transform.position = calcCellPosition(getClickPosition());
         item = null;
         mainOo.chObj(GameObject.Find("grass"), GameObject.Find("ground"));*/
@@ -121,5 +122,12 @@ class DragAndDrop
         //pick,
         drag//,
         //drop
+    }
+
+    public Vector2 getNearestCell(Vector2 position)
+    {
+        return new Vector2(
+            Mathf.Round(position.x / cellSize) * cellSize,
+            Mathf.Round(position.y / cellSize) * cellSize);
     }
 }

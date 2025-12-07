@@ -13,32 +13,41 @@ using MyProject.Models;
 public class Main : MonoBehaviour
 {
     /// <summary>
-    /// Ссылка на основнное статическое поле для ввода
+    /// РЎСЃС‹Р»РєР° РЅР° РѕСЃРЅРѕРІРЅРЅРѕРµ СЃС‚Р°С‚РёС‡РµСЃРєРѕРµ РїРѕР»Рµ РґР»СЏ РІРІРѕРґР°
     /// </summary>
     InputField mIf;
 
     /// <summary>
-    /// Ссылка на основную кнопку
+    /// РЎСЃС‹Р»РєР° РЅР° РѕСЃРЅРѕРІРЅСѓСЋ РєРЅРѕРїРєСѓ
     /// </summary>
     Button mB;
 
     /// <summary>
-    /// Хранит дату и время для результата
+    /// РҐСЂР°РЅРёС‚ РґР°С‚Сѓ Рё РІСЂРµРјСЏ РґР»СЏ СЂРµР·СѓР»СЊС‚Р°С‚Р°
     /// </summary>
     DateTime result1;
 
     /// <summary>
-    /// Экземпляр класса DragAndDrop
+    /// Р­РєР·РµРјРїР»СЏСЂ РєР»Р°СЃСЃР° DragAndDrop
     /// </summary>
     DragAndDrop dad;
 
     /// <summary>
-    /// Путь к серверу
+    /// РџСѓС‚СЊ Рє СЃРµСЂРІРµСЂСѓ
     /// </summary>
     string serverUrl;
 
+    public float panSpeed = 10f; // РЎРєРѕСЂРѕСЃС‚СЊ РїРµСЂРµРґРІРёР¶РµРЅРёСЏ РєР°РјРµСЂС‹
+    private Vector2 startMousePos; // РќР°С‡Р°Р»СЊРЅР°СЏ РїРѕР·РёС†РёСЏ РјС‹С€Рё РїСЂРё Р·Р°Р¶РёРјРµ РєРЅРѕРїРєРё
+
+    public float zoomSpeed = 10f; // РЎРєРѕСЂРѕСЃС‚СЊ РёР·РјРµРЅРµРЅРёСЏ СЂР°Р·РјРµСЂРѕРІ
+    public float minSize = 5f;   // РњРёРЅРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ РєР°РјРµСЂС‹
+    public float maxSize = 20f;  // РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ РєР°РјРµСЂС‹
+
+    private Camera cam;
+
     /// <summary>
-    /// (Unity) Выполняет действия до обновления первого кадра
+    /// (Unity) Р’С‹РїРѕР»РЅСЏРµС‚ РґРµР№СЃС‚РІРёСЏ РґРѕ РѕР±РЅРѕРІР»РµРЅРёСЏ РїРµСЂРІРѕРіРѕ РєР°РґСЂР°
     /// </summary>
     void Start()
     {
@@ -47,7 +56,7 @@ public class Main : MonoBehaviour
     }
 
     /// <summary>
-    /// Инициализация переменных
+    /// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїРµСЂРµРјРµРЅРЅС‹С…
     /// </summary>
     private void initVars()
     {
@@ -57,10 +66,11 @@ public class Main : MonoBehaviour
         mB.onClick.AddListener(startSetText);
         result1 = DateTime.Now;
         serverUrl = "http://192.168.1.199:5074/getdb";
+        cam = GameObject.Find("mainCamera").GetComponent<Camera>();
     }
 
     /// <summary>
-    /// Отрисовка поля
+    /// РћС‚СЂРёСЃРѕРІРєР° РїРѕР»СЏ
     /// </summary>
     private void drowField()
     {
@@ -69,10 +79,10 @@ public class Main : MonoBehaviour
     }
 
     /// <summary>
-    /// Заменяет указанный объект новым
+    /// Р—Р°РјРµРЅСЏРµС‚ СѓРєР°Р·Р°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ РЅРѕРІС‹Рј
     /// </summary>
-    /// <param name="goNew">Заменяющий объект</param>
-    /// <param name="goOld">Заменяемый объект</param>
+    /// <param name="goNew">Р—Р°РјРµРЅСЏСЋС‰РёР№ РѕР±СЉРµРєС‚</param>
+    /// <param name="goOld">Р—Р°РјРµРЅСЏРµРјС‹Р№ РѕР±СЉРµРєС‚</param>
     public void chObj(GameObject goNew, GameObject goOld)
     {
         Instantiate(goNew, goOld.transform.position, Quaternion.identity);
@@ -80,10 +90,10 @@ public class Main : MonoBehaviour
     }
 
     /// <summary>
-    /// Повторяет переданный объект указанное кол-во раз
+    /// РџРѕРІС‚РѕСЂСЏРµС‚ РїРµСЂРµРґР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ СѓРєР°Р·Р°РЅРЅРѕРµ РєРѕР»-РІРѕ СЂР°Р·
     /// </summary>
-    /// <param name="go">Объект для повторения</param>
-    /// <param name="nom">кол-во повторений</param>
+    /// <param name="go">РћР±СЉРµРєС‚ РґР»СЏ РїРѕРІС‚РѕСЂРµРЅРёСЏ</param>
+    /// <param name="nom">РєРѕР»-РІРѕ РїРѕРІС‚РѕСЂРµРЅРёР№</param>
     public void reppeatRight(GameObject go, int nom)
     {
         Vector2 offset = go.transform.position;
@@ -96,18 +106,50 @@ public class Main : MonoBehaviour
     }
 
     /// <summary>
-    /// (Unity) Вызывается при каждом обновлении кадра
+    /// (Unity) Р’С‹Р·С‹РІР°РµС‚СЃСЏ РїСЂРё РєР°Р¶РґРѕРј РѕР±РЅРѕРІР»РµРЅРёРё РєР°РґСЂР°
     /// </summary>
     void Update()
     {
         DateTime localDate = DateTime.Now;
         TimeSpan deltaTime = result1 - localDate;
         mIf.text = deltaTime.Minutes.ToString() + " m " + deltaTime.Seconds.ToString() + " s";
-        dad.Action();
+        //dad.Action();
+
+        // РџСЂРѕРІРµСЂСЏРµРј, Р·Р°Р¶Р°С‚Р° Р»Рё Р»РµРІР°СЏ РєРЅРѕРїРєР° РјС‹С€Рё
+        if (Input.GetMouseButtonDown(0))
+        {
+            // Р—Р°РїРѕРјРёРЅР°РµРј РЅР°С‡Р°Р»СЊРЅСѓСЋ РїРѕР·РёС†РёСЋ РјС‹С€Рё
+            startMousePos = Input.mousePosition;
+        }
+        else if (Input.GetMouseButton(0))
+        {
+            // Р Р°СЃСЃС‡РёС‚С‹РІР°РµРј СЂР°Р·РЅРёС†Сѓ РІ РїРѕР»РѕР¶РµРЅРёРё РјС‹С€Рё РІ РґРІСѓС…РјРµСЂРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚Р°С…
+            Vector2 delta = (Vector2)Input.mousePosition - startMousePos;
+
+            // РќР°РїСЂР°РІР»РµРЅРёРµ РґРІРёР¶РµРЅРёСЏ РєР°РјРµСЂС‹ (РѕР±СЂР°С‚РЅРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ РјС‹С€Рё)
+            Vector2 moveDirection = delta;
+
+            // РЎРјРµС‰Р°РµРј РєР°РјРµСЂСѓ РїСЂРѕС‚РёРІ РЅР°РїСЂР°РІР»РµРЅРёСЏ РјС‹С€Рё
+            cam.transform.Translate(-moveDirection.normalized * panSpeed * Time.deltaTime, Space.World);
+
+            // РћР±РЅРѕРІР»СЏРµРј СЃС‚Р°СЂС‚РѕРІСѓСЋ РїРѕР·РёС†РёСЋ РјС‹С€Рё
+            startMousePos = Input.mousePosition;
+        }
+
+        float scrollValue = Input.mouseScrollDelta.y;
+
+        if (scrollValue != 0)
+        {
+            // РР·РјРµРЅСЏРµРј РѕСЂС‚РѕРіСЂР°С„РёС‡РµСЃРєРёР№ СЂР°Р·РјРµСЂ РєР°РјРµСЂС‹
+            cam.orthographicSize -= scrollValue * zoomSpeed; //  * Time.deltaTime
+
+            // РћРіСЂР°РЅРёС‡РёРІР°РµРј РґРёР°РїР°Р·РѕРЅ СЂР°Р·РјРµСЂРѕРІ
+            cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minSize, maxSize);
+        }
     }
 
     /// <summary>
-    /// Запускает заполнение текстового поля в зависимости от платформы
+    /// Р—Р°РїСѓСЃРєР°РµС‚ Р·Р°РїРѕР»РЅРµРЅРёРµ С‚РµРєСЃС‚РѕРІРѕРіРѕ РїРѕР»СЏ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РїР»Р°С‚С„РѕСЂРјС‹
     /// </summary>
     public void startSetText()
     {
@@ -139,7 +181,7 @@ public class Main : MonoBehaviour
     }
 
     /// <summary>
-    /// Получает данные с сервера (Windows)
+    /// РџРѕР»СѓС‡Р°РµС‚ РґР°РЅРЅС‹Рµ СЃ СЃРµСЂРІРµСЂР° (Windows)
     /// </summary>
     private async void getFromServerWin()
     {
@@ -149,7 +191,7 @@ public class Main : MonoBehaviour
     }
 
     /// <summary>
-    /// Устанавливает полученное с сервера значение в поле
+    /// РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РїРѕР»СѓС‡РµРЅРЅРѕРµ СЃ СЃРµСЂРІРµСЂР° Р·РЅР°С‡РµРЅРёРµ РІ РїРѕР»Рµ
     /// </summary>
     private void resultToResultClass(String resultFromServer)
     {
