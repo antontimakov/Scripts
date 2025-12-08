@@ -8,7 +8,11 @@ using System.Net.Http;
 using System;
 using System.Globalization;
 using System.Diagnostics;
-using MyProject.Models;
+
+using Catatonia;
+using Catatonia.Application;
+using Catatonia.Application.Models;
+using Catatonia.Application.Web;
 
 public class Main : MonoBehaviour
 {
@@ -31,11 +35,6 @@ public class Main : MonoBehaviour
     /// Экземпляр класса DragAndDrop
     /// </summary>
     DragAndDrop dad;
-
-    /// <summary>
-    /// Путь к серверу
-    /// </summary>
-    string serverUrl;
 
     public float panSpeed = 10f; // Скорость передвижения камеры
     private Vector2 startMousePos; // Начальная позиция мыши при зажиме кнопки
@@ -61,12 +60,11 @@ public class Main : MonoBehaviour
     private void initVars()
     {
         dad = new DragAndDrop(this);
-        mIf = GameObject.Find("MainIf").GetComponent<InputField>();
         mB = GameObject.Find("MainButton").GetComponent<Button>();
         mB.onClick.AddListener(startSetText);
         result1 = DateTime.Now;
-        serverUrl = "http://192.168.1.199:5074/getdb";
         cam = GameObject.Find("mainCamera").GetComponent<Camera>();
+        mIf = GameObject.Find("MainIf").GetComponent<InputField>();
     }
 
     /// <summary>
@@ -112,7 +110,7 @@ public class Main : MonoBehaviour
     {
         DateTime localDate = DateTime.Now;
         TimeSpan deltaTime = result1 - localDate;
-        mIf.text = deltaTime.Minutes.ToString() + " m " + deltaTime.Seconds.ToString() + " s";
+        mIf.text = deltaTime.Hours.ToString() + " h " + deltaTime.Minutes.ToString() + " m " + deltaTime.Seconds.ToString() + " s";
         //dad.Action();
 
         // Проверяем, зажата ли левая кнопка мыши
@@ -165,7 +163,7 @@ public class Main : MonoBehaviour
 
     IEnumerator GetText()
     {
-        UnityWebRequest www = new UnityWebRequest(serverUrl);
+        UnityWebRequest www = new UnityWebRequest(Config.serverUrl);
         www.downloadHandler = new DownloadHandlerBuffer();
         yield return www.SendWebRequest();
 
@@ -176,7 +174,7 @@ public class Main : MonoBehaviour
         }
         else
         {
-            resultToResultClass(www.downloadHandler.text);
+            //WebWindows.resultToResultClass(www.downloadHandler.text);
         }
     }
 
@@ -185,20 +183,7 @@ public class Main : MonoBehaviour
     /// </summary>
     private async void getFromServerWin()
     {
-        using HttpClient client = new();
-        using HttpResponseMessage result = await client.GetAsync(serverUrl);
-        resultToResultClass(await result.Content.ReadAsStringAsync());
-    }
-
-    /// <summary>
-    /// Устанавливает полученное с сервера значение в поле
-    /// </summary>
-    private void resultToResultClass(String resultFromServer)
-    {
-        ResultClass myObject;
-        myObject = JsonUtility.FromJson<ResultClass>(resultFromServer);
-        mIf.text = myObject.time_fishing;
-        string format = "yyyy-MM-dd\\THH:mm:ss.fffff";
-        result1 = DateTime.ParseExact(myObject.time_fishing, format, CultureInfo.InvariantCulture);
+        WebWindows ww = new();
+        ww.getResult(result1, mIf);
     }
 }

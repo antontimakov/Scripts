@@ -1,7 +1,7 @@
 // ResultClass.cs
 using System;
 
-namespace MyProject.Models
+namespace Catatonia.Application.Models
 {
     public class ResultClass
     {
