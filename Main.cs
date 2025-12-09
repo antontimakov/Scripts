@@ -36,12 +36,12 @@ public class Main : MonoBehaviour
     /// </summary>
     DragAndDrop dad;
 
-    public float panSpeed = 10f; // Скорость передвижения камеры
+    public float panSpeed; // Скорость передвижения камеры
     private Vector2 startMousePos; // Начальная позиция мыши при зажиме кнопки
 
-    public float zoomSpeed = 10f; // Скорость изменения размеров
-    public float minSize = 5f;   // Минимальный размер камеры
-    public float maxSize = 20f;  // Максимальный размер камеры
+    public float zoomSpeed; // Скорость изменения размеров
+    public float minSize;   // Минимальный размер камеры
+    public float maxSize;  // Максимальный размер камеры
 
     private Camera cam;
 
@@ -65,6 +65,11 @@ public class Main : MonoBehaviour
         result1 = DateTime.Now;
         cam = GameObject.Find("mainCamera").GetComponent<Camera>();
         mIf = GameObject.Find("MainIf").GetComponent<InputField>();
+        
+        panSpeed = 0.3f; // Скорость передвижения камеры
+        zoomSpeed = 0.4f; // Скорость изменения размеров
+        minSize = 5f;   // Минимальный размер камеры
+        maxSize = 20f;  // Максимальный размер камеры
     }
 
     /// <summary>
@@ -128,7 +133,7 @@ public class Main : MonoBehaviour
             Vector2 moveDirection = delta;
 
             // Смещаем камеру против направления мыши
-            cam.transform.Translate(-moveDirection.normalized * panSpeed * Time.deltaTime, Space.World);
+            cam.transform.Translate(-moveDirection.normalized * panSpeed, Space.World);
 
             // Обновляем стартовую позицию мыши
             startMousePos = Input.mousePosition;
@@ -140,7 +145,6 @@ public class Main : MonoBehaviour
         {
             // Изменяем ортографический размер камеры
             cam.orthographicSize -= scrollValue * zoomSpeed; //  * Time.deltaTime
-
             // Ограничиваем диапазон размеров
             cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minSize, maxSize);
         }
