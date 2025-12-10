@@ -8,6 +8,7 @@ using System.Net.Http;
 using System;
 using System.Globalization;
 using System.Diagnostics;
+using TMPro;
 
 using Catatonia;
 using Catatonia.Application;
@@ -19,7 +20,7 @@ public class Main : MonoBehaviour
     /// <summary>
     /// Ссылка на основнное статическое поле для ввода
     /// </summary>
-    InputField mIf;
+    TextMeshProUGUI mIf;
 
     /// <summary>
     /// Ссылка на основную кнопку
@@ -64,7 +65,8 @@ public class Main : MonoBehaviour
         mB.onClick.AddListener(startSetText);
         result1 = DateTime.Now;
         cam = GameObject.Find("mainCamera").GetComponent<Camera>();
-        mIf = GameObject.Find("MainIf").GetComponent<InputField>();
+        mIf = GameObject.Find("MainText").GetComponent<TextMeshProUGUI>();
+            UnityEngine.Debug.Log(mIf);
         
         panSpeed = 0.3f; // Скорость передвижения камеры
         zoomSpeed = 0.4f; // Скорость изменения размеров

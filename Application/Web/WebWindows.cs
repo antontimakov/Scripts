@@ -1,11 +1,13 @@
 // Windows.cs
 using System;
-using Catatonia;
 using System.Net.Http;
 using UnityEngine;
 using UnityEngine.UI;
-using Catatonia.Application.Models;
 using System.Globalization;
+using TMPro;
+
+using Catatonia;
+using Catatonia.Application.Models;
 
 namespace Catatonia.Application.Web
 {
@@ -19,9 +21,9 @@ namespace Catatonia.Application.Web
         /// <summary>
         /// Ссылка на основнное статическое поле для ввода
         /// </summary>
-        InputField mIf;
+        TextMeshProUGUI mIf;
 
-        public async void getResult(DateTime re1, InputField mIf1)
+        public async void getResult(DateTime re1, TextMeshProUGUI mIf1)
         {
             mIf = mIf1;
             result1 = re1;
