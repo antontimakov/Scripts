@@ -66,11 +66,10 @@ public class Main : MonoBehaviour
         result1 = DateTime.Now;
         cam = GameObject.Find("mainCamera").GetComponent<Camera>();
         mIf = GameObject.Find("MainText").GetComponent<TextMeshProUGUI>();
-            UnityEngine.Debug.Log(mIf);
         
         panSpeed = 0.3f; // Скорость передвижения камеры
         zoomSpeed = 0.4f; // Скорость изменения размеров
-        minSize = 5f;   // Минимальный размер камеры
+        minSize = 1f;   // Минимальный размер камеры
         maxSize = 20f;  // Максимальный размер камеры
     }
 
@@ -79,8 +78,8 @@ public class Main : MonoBehaviour
     /// </summary>
     private void drowField()
     {
-        reppeatRight(GameObject.Find("grass"), 10);
-        reppeatRight(GameObject.Find("ground"), 10);
+        //reppeatRight(GameObject.Find("grass"), 10);
+        //reppeatRight(GameObject.Find("ground"), 10);
     }
 
     /// <summary>
@@ -117,7 +116,7 @@ public class Main : MonoBehaviour
     {
         DateTime localDate = DateTime.Now;
         TimeSpan deltaTime = result1 - localDate;
-        mIf.text = deltaTime.Hours.ToString() + " h " + deltaTime.Minutes.ToString() + " m " + deltaTime.Seconds.ToString() + " s";
+        //mIf.text = deltaTime.Hours.ToString() + " h " + deltaTime.Minutes.ToString() + " m " + deltaTime.Seconds.ToString() + " s";
         //dad.Action();
 
         // Проверяем, зажата ли левая кнопка мыши
@@ -189,7 +188,23 @@ public class Main : MonoBehaviour
     /// </summary>
     private async void getFromServerWin()
     {
-        WebWindows ww = new();
-        ww.getResult(result1, mIf);
+        WebWindows ww = new WebWindows();
+        // Данные для отправки
+        ResultClass jsonData = new(){did="5",time_fishing=DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.000Z")};
+        string postData = JsonUtility.ToJson(jsonData);
+                UnityEngine.Debug.Log(postData);
+
+        StartCoroutine(ww.PostRequest(Config.serverUrl, postData,
+            (response) =>
+            {
+                mIf.text = response; // Успешный ответ
+                UnityEngine.Debug.Log(response);
+            },
+            (error) =>
+            {
+                mIf.text = "Error: " + error;
+                UnityEngine.Debug.Log(error);
+            }
+        ));
     }
 }
