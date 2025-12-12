@@ -31,6 +31,7 @@ public class Main : MonoBehaviour
     /// Хранит дату и время для результата
     /// </summary>
     DateTime result1;
+    string result2;
 
     /// <summary>
     /// Экземпляр класса DragAndDrop
@@ -52,7 +53,7 @@ public class Main : MonoBehaviour
     void Start()
     {
         initVars();
-        drowField();
+        startSetText();
     }
 
     /// <summary>
@@ -76,8 +77,47 @@ public class Main : MonoBehaviour
     /// <summary>
     /// Отрисовка поля
     /// </summary>
-    private void drowField()
+    private void drowField(string fromServer)
     {
+        UnityEngine.Debug.Log(fromServer);
+        ResultClass result;
+        result = JsonUtility.FromJson<ResultClass>(fromServer);
+        
+        // Загружаем префабы (предварительно можно закэшировать)
+        GameObject grassPrefab = Resources.Load<GameObject>("Prefabs/grass");
+        GameObject groundPrefab = Resources.Load<GameObject>("Prefabs/ground");
+        foreach (ElemModel elem in result.received)
+        {
+            GameObject prefab = null;
+
+            if (elem.elem_name == "grass") prefab = grassPrefab;
+            else if (elem.elem_name == "ground") prefab = groundPrefab;
+
+            if (prefab != null)
+            {
+                Vector2 position = new Vector2(elem.x, elem.y);
+                Instantiate(prefab, position, Quaternion.identity);
+            }
+            else
+            {
+                UnityEngine.Debug.LogWarning($"Prefab not found for elem_name: {elem.elem_name}");
+            }
+            UnityEngine.Debug.Log(elem.elem_name);
+        }
+        /*ResultClass myObject;
+        myObject = JsonUtility.FromJson<ResultClass>(resultFromServer);
+        mIf.text = myObject.time_fishing;
+        string format = "yyyy-MM-dd\\THH:mm:ss.fffff";
+        result1 = DateTime.ParseExact(myObject.time_fishing, format, CultureInfo.InvariantCulture);*/
+
+        //Vector2 offset2 = go.transform.position;
+        /*Vector2 offset2 = new();
+        offset2.x = 0;
+        offset2.y = 0;
+        Instantiate(go, offset2, Quaternion.identity);
+        offset2.x = 2f;
+        offset2.y = 0;
+        Instantiate(go2, offset2, Quaternion.identity);*/
         //reppeatRight(GameObject.Find("grass"), 10);
         //reppeatRight(GameObject.Find("ground"), 10);
     }
@@ -190,15 +230,15 @@ public class Main : MonoBehaviour
     {
         WebWindows ww = new WebWindows();
         // Данные для отправки
-        ResultClass jsonData = new(){did="5",time_fishing=DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.000Z")};
-        string postData = JsonUtility.ToJson(jsonData);
-                UnityEngine.Debug.Log(postData);
+        //ResultClass jsonData = new(){did="5",time_fishing=DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.000Z")};
+        //string postData = JsonUtility.ToJson(jsonData);
+        string postData = "{}";
 
         StartCoroutine(ww.PostRequest(Config.serverUrl, postData,
             (response) =>
             {
                 mIf.text = response; // Успешный ответ
-                UnityEngine.Debug.Log(response);
+                drowField(response);
             },
             (error) =>
             {

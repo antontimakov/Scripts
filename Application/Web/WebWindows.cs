@@ -27,11 +27,11 @@ namespace Catatonia.Application.Web
 
         public async void getResult(DateTime re1, TextMeshProUGUI mIf1)
         {
-            mIf = mIf1;
+            /*mIf = mIf1;
             result1 = re1;
             using HttpClient client = new();
             using HttpResponseMessage result = await client.GetAsync(Config.serverUrl);
-            resultToResultClass(await result.Content.ReadAsStringAsync());
+            resultToResultClass(await result.Content.ReadAsStringAsync());*/
         }
 
         // TODO УБРАТЬ ОТСЮДА
@@ -40,11 +40,11 @@ namespace Catatonia.Application.Web
         /// </summary>
         private void resultToResultClass(String resultFromServer)
         {
-            ResultClass myObject;
+            /*ResultClass myObject;
             myObject = JsonUtility.FromJson<ResultClass>(resultFromServer);
             mIf.text = myObject.time_fishing;
             string format = "yyyy-MM-dd\\THH:mm:ss.fffff";
-            result1 = DateTime.ParseExact(myObject.time_fishing, format, CultureInfo.InvariantCulture);
+            result1 = DateTime.ParseExact(myObject.time_fishing, format, CultureInfo.InvariantCulture);*/
         }
         public IEnumerator PostRequest(string url, string jsonData, System.Action<string> onSuccess, System.Action<string> onError)
         {
