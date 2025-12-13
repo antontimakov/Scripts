@@ -28,6 +28,31 @@ public class Main : MonoBehaviour
     Button mB;
 
     /// <summary>
+    /// Ссылка на кнопку закрытия модального окна магазина
+    /// </summary>
+    Button bCloseShop;
+
+    /// <summary>
+    /// Ссылка на модальное окно магазина
+    /// </summary>
+    GameObject wShop;
+
+    /// <summary>
+    /// Ссылка на панель магазина
+    /// </summary>
+    GameObject pShop;
+
+    /// <summary>
+    /// Ссылка на первую кнопку магазина
+    /// </summary>
+    Button bShop1;
+
+    /// <summary>
+    /// Ссылка на вторую кнопку магазина
+    /// </summary>
+    Button bShop2;
+
+    /// <summary>
     /// Хранит дату и время для результата
     /// </summary>
     DateTime result1;
@@ -54,6 +79,10 @@ public class Main : MonoBehaviour
     {
         initVars();
         startSetText();
+        hideSop();
+
+        mB.onClick.AddListener(showShop);
+        bCloseShop.onClick.AddListener(hideSop);
     }
 
     /// <summary>
@@ -63,15 +92,31 @@ public class Main : MonoBehaviour
     {
         dad = new DragAndDrop(this);
         mB = GameObject.Find("MainButton").GetComponent<Button>();
-        mB.onClick.AddListener(startSetText);
-        result1 = DateTime.Now;
-        cam = GameObject.Find("mainCamera").GetComponent<Camera>();
+        cam = GameObject.Find("MainCamera").GetComponent<Camera>();
         mIf = GameObject.Find("MainText").GetComponent<TextMeshProUGUI>();
+        bCloseShop = GameObject.Find("ButtonCloseShop").GetComponent<Button>();
+        wShop = GameObject.Find("ModalWindowShop");
+        pShop = GameObject.Find("PanelShop");
+        bShop1 = GameObject.Find("ShopButton1").GetComponent<Button>();
+        bShop2 = GameObject.Find("ShopButton2").GetComponent<Button>();
+        result1 = DateTime.Now;
         
         panSpeed = 0.3f; // Скорость передвижения камеры
         zoomSpeed = 0.4f; // Скорость изменения размеров
         minSize = 1f;   // Минимальный размер камеры
         maxSize = 20f;  // Максимальный размер камеры
+    }
+
+    private void showShop() {
+        wShop.SetActive(true);
+        Sprite sGrass = Resources.Load<Sprite>("Sprites/grass");
+        Sprite sGround = Resources.Load<Sprite>("Sprites/ground");
+        bShop1.GetComponent<Image>().sprite = sGrass;
+        bShop2.GetComponent<Image>().sprite = sGround;
+    }
+
+    private void hideSop() {
+        wShop.SetActive(false);
     }
 
     /// <summary>
