@@ -1,6 +1,7 @@
 // DragAndDrop.cs
 using System;
 using UnityEngine;
+using Catatonia;
 
 namespace Catatonia.Application
 {
@@ -97,6 +98,7 @@ namespace Catatonia.Application
 
             // заменяет элемент по которому кликнули на траву
             mainOo.chObj(mainOo.grassPrefab, item);
+            mainOo.setServerWin(item.transform);
             state = State.none;
         }
 

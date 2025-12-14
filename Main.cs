@@ -93,6 +93,7 @@ public class Main : MonoBehaviour
     private Camera cam;
 
     public GameObject grassPrefab;
+    public WebWindows ww;
 
     /// <summary>
     /// (Unity) Выполняет действия до обновления первого кадра
@@ -314,7 +315,7 @@ public class Main : MonoBehaviour
     /// </summary>
     private async void getFromServerWin()
     {
-        WebWindows ww = new WebWindows();
+        ww = new WebWindows();
         // Данные для отправки
         //ResultClass jsonData = new(){did="5",time_fishing=DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.000Z")};
         //string postData = JsonUtility.ToJson(jsonData);
@@ -329,6 +330,33 @@ public class Main : MonoBehaviour
             (error) =>
             {
                 mIf.text = "Error: " + error;
+                UnityEngine.Debug.Log(error);
+            }
+        ));
+    }
+
+    /// <summary>
+    /// Получает данные с сервера (Windows)
+    /// </summary>
+    public async void setServerWin(Transform itemTransform)
+    {
+        ElemModel jsonData = new(){
+            elem_id = 1,
+            elem_name = "grass",
+            x = (int)itemTransform.position.x,
+            y = (int)itemTransform.position.y
+        };
+        string postData = JsonUtility.ToJson(jsonData);
+                UnityEngine.Debug.Log(postData);
+        StartCoroutine(ww.PostRequest(Config.serverUrl2, postData,
+            (response) =>
+            {
+                // Успешный ответ
+                UnityEngine.Debug.Log(response);
+                //response;
+            },
+            (error) =>
+            {
                 UnityEngine.Debug.Log(error);
             }
         ));
