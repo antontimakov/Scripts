@@ -75,26 +75,28 @@ namespace Catatonia.Application
             }
             item = clickedItem.gameObject;
             //UnityEngine.Debug.Log(item.name);
-            offset = (Vector2)clickedItem.position - clickPosition;
+            //offset = (Vector2)clickedItem.position - clickPosition;
             state = State.drag;
         }
 
         void drag()
         {
-            item.transform.position = getClickPosition() + offset;
+            //item.transform.position = getClickPosition() + offset;
         }
         void drop()
         {
-            // помещает элемент в верхний левый угол
-            BoxCollider2D boxCollider = item.GetComponent<BoxCollider2D>();
+            /*BoxCollider2D boxCollider = item.GetComponent<BoxCollider2D>();
             float height = boxCollider.size.y * item.transform.localScale.y;
             float width = boxCollider.size.x * item.transform.localScale.x;
             nullVector.y -= height / 2;
             nullVector.x += width / 2;
-            item.transform.position = getNearestCell(item.transform.position); //nullVector;
-            /*item.transform.position = calcCellPosition(getClickPosition());
-            item = null;
-            mainOo.chObj(GameObject.Find("grass"), GameObject.Find("ground"));*/
+            item.transform.position = getNearestCell(item.transform.position);
+
+            item.transform.position = calcCellPosition(getClickPosition());
+            item = null;*/
+
+            // заменяет элемент по которому кликнули на траву
+            mainOo.chObj(mainOo.grassPrefab, item);
             state = State.none;
         }
 

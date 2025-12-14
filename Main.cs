@@ -33,6 +33,16 @@ public class Main : MonoBehaviour
     Button bCloseShop;
 
     /// <summary>
+    /// Ссылка на объект активного в данный момент элемента
+    /// </summary>
+    GameObject oActiveItem;
+
+    /// <summary>
+    /// Ссылка на кнопку активного в данный момент элемента
+    /// </summary>
+    Button bActiveItem;
+
+    /// <summary>
     /// Ссылка на модальное окно магазина
     /// </summary>
     GameObject wShop;
@@ -51,6 +61,16 @@ public class Main : MonoBehaviour
     /// Ссылка на вторую кнопку магазина
     /// </summary>
     Button bShop2;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    Sprite sGrass;
+
+    /// <summary>
+    /// Ссылка выбранный спрайт
+    /// </summary>
+    Sprite sCurrent;
 
     /// <summary>
     /// Хранит дату и время для результата
@@ -72,6 +92,8 @@ public class Main : MonoBehaviour
 
     private Camera cam;
 
+    public GameObject grassPrefab;
+
     /// <summary>
     /// (Unity) Выполняет действия до обновления первого кадра
     /// </summary>
@@ -80,6 +102,7 @@ public class Main : MonoBehaviour
         initVars();
         startSetText();
         hideSop();
+        hideActiveItem();
 
         mB.onClick.AddListener(showShop);
         bCloseShop.onClick.AddListener(hideSop);
@@ -99,6 +122,8 @@ public class Main : MonoBehaviour
         pShop = GameObject.Find("PanelShop");
         bShop1 = GameObject.Find("ShopButton1").GetComponent<Button>();
         bShop2 = GameObject.Find("ShopButton2").GetComponent<Button>();
+        oActiveItem = GameObject.Find("ActiveItemButton");
+        bActiveItem = oActiveItem.GetComponent<Button>();
         result1 = DateTime.Now;
         
         panSpeed = 0.3f; // Скорость передвижения камеры
@@ -109,14 +134,30 @@ public class Main : MonoBehaviour
 
     private void showShop() {
         wShop.SetActive(true);
-        Sprite sGrass = Resources.Load<Sprite>("Sprites/grass");
+        sGrass = Resources.Load<Sprite>("Sprites/grass");
         Sprite sGround = Resources.Load<Sprite>("Sprites/ground");
         bShop1.GetComponent<Image>().sprite = sGrass;
         bShop2.GetComponent<Image>().sprite = sGround;
+        bShop1.onClick.AddListener(SetActiveItem);
     }
 
     private void hideSop() {
         wShop.SetActive(false);
+    }
+
+    private void SetActiveItem()
+    {
+        showActiveItem();
+        bActiveItem.GetComponent<Image>().sprite = sGrass;
+        hideSop();
+    }
+
+    private void showActiveItem() {
+        oActiveItem.SetActive(true);
+    }
+
+    private void hideActiveItem() {
+        oActiveItem.SetActive(false);
     }
 
     /// <summary>
@@ -129,7 +170,7 @@ public class Main : MonoBehaviour
         result = JsonUtility.FromJson<ResultClass>(fromServer);
         
         // Загружаем префабы (предварительно можно закэшировать)
-        GameObject grassPrefab = Resources.Load<GameObject>("Prefabs/grass");
+        grassPrefab = Resources.Load<GameObject>("Prefabs/grass");
         GameObject groundPrefab = Resources.Load<GameObject>("Prefabs/ground");
         foreach (ElemModel elem in result.received)
         {
@@ -202,7 +243,7 @@ public class Main : MonoBehaviour
         DateTime localDate = DateTime.Now;
         TimeSpan deltaTime = result1 - localDate;
         //mIf.text = deltaTime.Hours.ToString() + " h " + deltaTime.Minutes.ToString() + " m " + deltaTime.Seconds.ToString() + " s";
-        //dad.Action();
+        dad.Action();
 
         // Проверяем, зажата ли левая кнопка мыши
         if (Input.GetMouseButtonDown(0))
