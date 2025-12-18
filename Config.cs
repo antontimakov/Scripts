@@ -13,8 +13,8 @@ namespace Catatonia
 
         static Config()
         {
-            serverUrl = "http://192.168.1.199:5074/getdb";
-            serverUrl2 = "http://192.168.1.199:5074/setdb";
+            serverUrl = "http://192.168.1.199:5074/api/data/getdb";
+            serverUrl2 = "http://192.168.1.199:5074/api/data/setdb";
         }
     }
 }
