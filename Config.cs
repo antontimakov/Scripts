@@ -1,5 +1,4 @@
 // Config.cs
-using System;
 
 namespace Catatonia
 {
@@ -13,8 +12,8 @@ namespace Catatonia
 
         static Config()
         {
-            serverUrl = "http://192.168.1.199:5074/api/data/getdb";
-            serverUrl2 = "http://192.168.1.199:5074/api/data/setdb";
+            serverUrl = "http://192.168.1.199:5074/api/FillField/index";
+            serverUrl2 = "http://192.168.1.199:5074/api/FillField/update";
         }
     }
 }
