@@ -13,7 +13,6 @@ using TMPro;
 using Catatonia;
 using Catatonia.Application;
 using Catatonia.Application.Models;
-using Catatonia.Application.Web;
 
 public class Main : MonoBehaviour
 {
@@ -83,6 +82,11 @@ public class Main : MonoBehaviour
     /// </summary>
     DragAndDrop dad;
 
+    /// <summary>
+    /// Экземпляр класса GameField
+    /// </summary>
+    GameField gameFieldObj;
+
     public float panSpeed; // Скорость передвижения камеры
     private Vector2 startMousePos; // Начальная позиция мыши при зажиме кнопки
 
@@ -92,8 +96,7 @@ public class Main : MonoBehaviour
 
     private Camera cam;
 
-    public GameObject grassPrefab;
-    public WebWindows ww;
+    public WebServer serverObj;
 
     /// <summary>
     /// (Unity) Выполняет действия до обновления первого кадра
@@ -101,12 +104,12 @@ public class Main : MonoBehaviour
     void Start()
     {
         initVars();
-        startSetText();
-        hideSop();
+        //startSetText();
+        hideShop();
         hideActiveItem();
 
         mB.onClick.AddListener(showShop);
-        bCloseShop.onClick.AddListener(hideSop);
+        bCloseShop.onClick.AddListener(hideShop);
     }
 
     /// <summary>
@@ -114,7 +117,14 @@ public class Main : MonoBehaviour
     /// </summary>
     private void initVars()
     {
-        dad = new DragAndDrop(this);
+        dad = new(this);
+        serverObj = new();
+        gameFieldObj = new(this, serverObj)
+        {
+            grassPrefab = Resources.Load<GameObject>("Prefabs/grass"),
+            groundPrefab = Resources.Load<GameObject>("Prefabs/ground")
+        };
+
         mB = GameObject.Find("MainButton").GetComponent<Button>();
         cam = GameObject.Find("MainCamera").GetComponent<Camera>();
         mIf = GameObject.Find("MainText").GetComponent<TextMeshProUGUI>();
@@ -125,12 +135,17 @@ public class Main : MonoBehaviour
         bShop2 = GameObject.Find("ShopButton2").GetComponent<Button>();
         oActiveItem = GameObject.Find("ActiveItemButton");
         bActiveItem = oActiveItem.GetComponent<Button>();
+
         result1 = DateTime.Now;
         
         panSpeed = 0.3f; // Скорость передвижения камеры
         zoomSpeed = 0.4f; // Скорость изменения размеров
         minSize = 1f;   // Минимальный размер камеры
         maxSize = 20f;  // Максимальный размер камеры
+    }
+    public void mainCopyPrefab(GameObject prefab, Vector2 position)
+    {
+        Instantiate(prefab, position, Quaternion.identity);
     }
 
     private void showShop() {
@@ -142,7 +157,7 @@ public class Main : MonoBehaviour
         bShop1.onClick.AddListener(SetActiveItem);
     }
 
-    private void hideSop() {
+    private void hideShop() {
         wShop.SetActive(false);
     }
 
@@ -150,7 +165,7 @@ public class Main : MonoBehaviour
     {
         showActiveItem();
         bActiveItem.GetComponent<Image>().sprite = sGrass;
-        hideSop();
+        hideShop();
     }
 
     private void showActiveItem() {
@@ -159,54 +174,6 @@ public class Main : MonoBehaviour
 
     private void hideActiveItem() {
         oActiveItem.SetActive(false);
-    }
-
-    /// <summary>
-    /// Отрисовка поля
-    /// </summary>
-    private void drowField(string fromServer)
-    {
-        UnityEngine.Debug.Log(fromServer);
-        ResultClass result;
-        result = JsonUtility.FromJson<ResultClass>(fromServer);
-        
-        // Загружаем префабы (предварительно можно закэшировать)
-        grassPrefab = Resources.Load<GameObject>("Prefabs/grass");
-        GameObject groundPrefab = Resources.Load<GameObject>("Prefabs/ground");
-        foreach (ElemModel elem in result.received)
-        {
-            GameObject prefab = null;
-
-            if (elem.elem_name == "grass") prefab = grassPrefab;
-            else if (elem.elem_name == "ground") prefab = groundPrefab;
-
-            if (prefab != null)
-            {
-                Vector2 position = new Vector2(elem.x, elem.y);
-                Instantiate(prefab, position, Quaternion.identity);
-            }
-            else
-            {
-                UnityEngine.Debug.LogWarning($"Prefab not found for elem_name: {elem.elem_name}");
-            }
-            UnityEngine.Debug.Log(elem.elem_name);
-        }
-        /*ResultClass myObject;
-        myObject = JsonUtility.FromJson<ResultClass>(resultFromServer);
-        mIf.text = myObject.time_fishing;
-        string format = "yyyy-MM-dd\\THH:mm:ss.fffff";
-        result1 = DateTime.ParseExact(myObject.time_fishing, format, CultureInfo.InvariantCulture);*/
-
-        //Vector2 offset2 = go.transform.position;
-        /*Vector2 offset2 = new();
-        offset2.x = 0;
-        offset2.y = 0;
-        Instantiate(go, offset2, Quaternion.identity);
-        offset2.x = 2f;
-        offset2.y = 0;
-        Instantiate(go2, offset2, Quaternion.identity);*/
-        //reppeatRight(GameObject.Find("grass"), 10);
-        //reppeatRight(GameObject.Find("ground"), 10);
     }
 
     /// <summary>
@@ -285,15 +252,15 @@ public class Main : MonoBehaviour
     {
         if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
-            StartCoroutine(GetText());
+            //StartCoroutine(GetText());
         }
         else
         {
-            getFromServerWin();
+            //getFromServerWin();
         }
     }
 
-    IEnumerator GetText()
+    /*IEnumerator GetText()
     {
         UnityWebRequest www = new UnityWebRequest(Config.serverUrl);
         www.downloadHandler = new DownloadHandlerBuffer();
@@ -308,12 +275,12 @@ public class Main : MonoBehaviour
         {
             //WebWindows.resultToResultClass(www.downloadHandler.text);
         }
-    }
+    }*/
 
     /// <summary>
     /// Получает данные с сервера (Windows)
     /// </summary>
-    private async void getFromServerWin()
+    /*private async void getFromServerWin()
     {
         ww = new WebWindows();
         // Данные для отправки
@@ -333,7 +300,7 @@ public class Main : MonoBehaviour
                 UnityEngine.Debug.Log(error);
             }
         ));
-    }
+    }*/
 
     /// <summary>
     /// Получает данные с сервера (Windows)
@@ -348,7 +315,7 @@ public class Main : MonoBehaviour
         };
         string postData = JsonUtility.ToJson(jsonData);
                 UnityEngine.Debug.Log(postData);
-        StartCoroutine(ww.PostRequest(Config.serverUrl2, postData,
+        /*StartCoroutine(ww.PostRequest(Config.serverUrl2, postData,
             (response) =>
             {
                 // Успешный ответ
@@ -359,6 +326,6 @@ public class Main : MonoBehaviour
             {
                 UnityEngine.Debug.Log(error);
             }
-        ));
+        ));*/
     }
 }
