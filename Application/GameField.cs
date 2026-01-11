@@ -1,4 +1,4 @@
-// GameField.cs
+// Application/GameField.cs
 using UnityEngine;
 using Catatonia.Application.Models;
 
@@ -15,7 +15,10 @@ public class GameField
     {
         this.mainObj = mainObj;
         this.serverObj = serverObj;
+        groundPrefab = Resources.Load<GameObject>("Prefabs/ground");
+        grassPrefab = Resources.Load<GameObject>("Prefabs/grass");
         getDataAndDrowField();
+        
     }
 
     /// <summary>
@@ -52,7 +55,7 @@ public class GameField
             if (prefab != null)
             {
                 Vector2 position = new Vector2(elem.x, elem.y);
-                mainObj.mainCopyPrefab(prefab, position);
+                mainObj.mainCopyObj(prefab, position);
             }
             else
             {
@@ -76,5 +79,32 @@ public class GameField
         Instantiate(go2, offset2, Quaternion.identity);*/
         //reppeatRight(GameObject.Find("grass"), 10);
         //reppeatRight(GameObject.Find("ground"), 10);
+    }
+
+    /// <summary>
+    /// Получает данные с сервера (Windows)
+    /// </summary>
+    public async void setServerWin(Transform itemTransform)
+    {
+        ElemModel jsonData = new(){
+            elem_id = 1,
+            elem_name = "grass",
+            x = (int)itemTransform.position.x,
+            y = (int)itemTransform.position.y
+        };
+        string postData = JsonUtility.ToJson(jsonData);
+                UnityEngine.Debug.Log(postData);
+        /*StartCoroutine(ww.PostRequest(Config.serverUrl2, postData,
+            (response) =>
+            {
+                // Успешный ответ
+                UnityEngine.Debug.Log(response);
+                //response;
+            },
+            (error) =>
+            {
+                UnityEngine.Debug.Log(error);
+            }
+        ));*/
     }
 }

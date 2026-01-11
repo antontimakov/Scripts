@@ -98,7 +98,7 @@ namespace Catatonia.Application
 
             // заменяет элемент по которому кликнули на траву
             //mainOo.chObj(mainOo.grassPrefab, item);
-            mainOo.setServerWin(item.transform);
+            //mainOo.setServerWin(item.transform);
             state = State.none;
         }
 
