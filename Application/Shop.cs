@@ -1,6 +1,7 @@
 // Application/Shop.cs
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 namespace Catatonia.Application;
 public class Shop
@@ -18,14 +19,9 @@ public class Shop
     public GameObject pShop;
 
     /// <summary>
-    /// Ссылка на первую кнопку магазина
+    /// Ссылка на первую кнопки магазина
     /// </summary>
-    public Button bShop1;
-
-    /// <summary>
-    /// Ссылка на вторую кнопку магазина
-    /// </summary>
-    public Button bShop2;
+    public List<Button> shopButtons;
 
     /// <summary>
     /// Ссылка на кнопку закрытия модального окна магазина
@@ -46,26 +42,39 @@ public class Shop
         this.mainObj = mainObj;
         wShop = GameObject.Find("ModalWindowShop");
         pShop = GameObject.Find("PanelShop");
-        bShop1 = GameObject.Find("ShopButton1").GetComponent<Button>();
-        bShop2 = GameObject.Find("ShopButton2").GetComponent<Button>();
+        shopButtons = new List<Button>
+        {
+            GameObject.Find("ShopButton1").GetComponent<Button>(),
+            GameObject.Find("ShopButton2").GetComponent<Button>()
+        };
         bCloseShop = GameObject.Find("ButtonCloseShop").GetComponent<Button>();
         hideShop();
         bCloseShop.onClick.AddListener(hideShop);
     }
     public void showShop() {
         wShop.SetActive(true);
-        Sprite sGround = Resources.Load<Sprite>("Sprites/ground");
-        bShop1.GetComponent<Image>().sprite = sGrass;
-        bShop2.GetComponent<Image>().sprite = sGround;
-        bShop1.onClick.AddListener(SetActiveItem);
+        
+        string[] spriteNames = { "magic_plant", "tomato" };
+        int i = 0;
+
+        foreach (Button btn in shopButtons)
+        {
+            string spritePath = "Sprites/" + spriteNames[i++];
+            Sprite CurrentSprite = Resources.Load<Sprite>(spritePath);
+            if (CurrentSprite != null)
+            {
+                btn.GetComponent<Image>().sprite = CurrentSprite;
+                btn.onClick.AddListener(() => {SetActiveItem(CurrentSprite);});
+            }
+        }
     }
 
     private void hideShop() {
         wShop.SetActive(false);
     }
-    private void SetActiveItem()
+    private void SetActiveItem(Sprite CurrentSprite)
     {
-        activeItemObj.SetActiveItem();
+        activeItemObj.SetActiveItem(CurrentSprite);
         hideShop();
     }
 }

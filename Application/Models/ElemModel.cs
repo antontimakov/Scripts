@@ -10,5 +10,7 @@ namespace Catatonia.Application.Models
         public string elem_name;
         public int x;
         public int y;
+        public bool elem_plantable;
+        public bool elem_harvestable;
     }
 }

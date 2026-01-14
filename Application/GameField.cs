@@ -7,6 +7,7 @@ public class GameField
 {
     public GameObject grassPrefab;
     public GameObject groundPrefab;
+    public GameObject grainPrefab;
 
     private Main mainObj;
     private WebServer serverObj;
@@ -17,6 +18,7 @@ public class GameField
         this.serverObj = serverObj;
         groundPrefab = Resources.Load<GameObject>("Prefabs/ground");
         grassPrefab = Resources.Load<GameObject>("Prefabs/grass");
+        grainPrefab = Resources.Load<GameObject>("Prefabs/magic_plant");
         getDataAndDrowField();
         
     }
@@ -41,27 +43,29 @@ public class GameField
     /// </summary>
     public void drowField(string fromServer)
     {
-        UnityEngine.Debug.Log(fromServer);
         ResultClass result = JsonUtility.FromJson<ResultClass>(fromServer);
         
-        // Загружаем префабы (предварительно можно закэшировать)
         foreach (ElemModel elem in result.received)
         {
             GameObject prefab = null;
 
-            if (elem.elem_name == "grass") prefab = grassPrefab;
-            else if (elem.elem_name == "ground") prefab = groundPrefab;
+            switch (elem.elem_name)
+            {
+                    case "magic_plant": prefab = grainPrefab; break;
+                    case "grass": prefab = grassPrefab; break;
+                    case "ground": prefab = groundPrefab; break;
+            }
 
             if (prefab != null)
             {
                 Vector2 position = new Vector2(elem.x, elem.y);
-                mainObj.mainCopyObj(prefab, position);
+                GameObject newObj = mainObj.mainCopyObj(prefab, position, elem);
+                //UnityEngine.Debug.Log(newObj.GetComponent<DataDb>().serverData.elem_name);
             }
             else
             {
                 UnityEngine.Debug.LogWarning($"Prefab not found for elem_name: {elem.elem_name}");
             }
-            UnityEngine.Debug.Log(elem.elem_name);
         }
         /*ResultClass myObject;
         myObject = JsonUtility.FromJson<ResultClass>(resultFromServer);
@@ -82,9 +86,9 @@ public class GameField
     }
 
     /// <summary>
-    /// Получает данные с сервера (Windows)
+    /// Отправляет данные на сервер
     /// </summary>
-    public async void setServerWin(Transform itemTransform)
+    public void setServerWin(Transform itemTransform)
     {
         ElemModel jsonData = new(){
             elem_id = 1,
@@ -93,18 +97,18 @@ public class GameField
             y = (int)itemTransform.position.y
         };
         string postData = JsonUtility.ToJson(jsonData);
-                UnityEngine.Debug.Log(postData);
-        /*StartCoroutine(ww.PostRequest(Config.serverUrl2, postData,
+                //UnityEngine.Debug.Log(postData);
+        mainObj.StartCoroutine(serverObj.PostRequest(Config.serverUrl2, postData,
             (response) =>
             {
                 // Успешный ответ
-                UnityEngine.Debug.Log(response);
+                //UnityEngine.Debug.Log(response);
                 //response;
             },
             (error) =>
             {
                 UnityEngine.Debug.Log(error);
             }
-        ));*/
+        ));
     }
 }

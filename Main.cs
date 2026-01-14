@@ -70,7 +70,6 @@ public class Main : MonoBehaviour
     void Start()
     {
         initVars();
-        activeItemObj.hideActiveItem();
 
         mB.onClick.AddListener(shopObj.showShop);
     }
@@ -83,13 +82,10 @@ public class Main : MonoBehaviour
 
         Sprite sGrassLocal = Resources.Load<Sprite>("Sprites/grass");
 
-        dad = new(this);
         serverObj = new();
         gameFieldObj = new(this, serverObj);
-        activeItemObj = new(this)
-        {
-            sGrass = sGrassLocal
-        };
+        dad = new(this, gameFieldObj);
+        activeItemObj = new(this);
         shopObj = new(this)
         {
             activeItemObj = this.activeItemObj,
@@ -108,10 +104,19 @@ public class Main : MonoBehaviour
     /// </summary>
     /// <param name="oldObj"></param>
     /// <param name="position"></param>
-    public void mainCopyObj(GameObject oldObj, Vector2 position)
+    public GameObject mainCopyObj(GameObject prefab, Vector2 position, ElemModel data = null)
     {
-        Instantiate(oldObj, position, Quaternion.identity);
+        GameObject obj = Instantiate(prefab, position, Quaternion.identity);
+        
+        if (data != null)
+        {
+            var comp = obj.AddComponent<DataDb>();
+            comp.serverData = data;
+        }
+
+        return obj;
     }
+
 
     /// <summary>
     /// Заменяет указанный объект новым
@@ -135,61 +140,4 @@ public class Main : MonoBehaviour
         dad.Action();
         zoomObj.zoomGameField();
     }
-
-    /// <summary>
-    /// Запускает заполнение текстового поля в зависимости от платформы
-    /// </summary>
-    public void startSetText()
-    {
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
-        {
-            //StartCoroutine(GetText());
-        }
-        else
-        {
-            //getFromServerWin();
-        }
-    }
-
-    /*IEnumerator GetText()
-    {
-        UnityWebRequest www = new UnityWebRequest(Config.serverUrl);
-        www.downloadHandler = new DownloadHandlerBuffer();
-        yield return www.SendWebRequest();
-
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            mIf.text = www.error;
-            UnityEngine.Debug.Log(www.error);
-        }
-        else
-        {
-            //WebWindows.resultToResultClass(www.downloadHandler.text);
-        }
-    }*/
-
-    /// <summary>
-    /// Получает данные с сервера (Windows)
-    /// </summary>
-    /*private async void getFromServerWin()
-    {
-        ww = new WebWindows();
-        // Данные для отправки
-        //ResultClass jsonData = new(){did="5",time_fishing=DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.000Z")};
-        //string postData = JsonUtility.ToJson(jsonData);
-        string postData = "{}";
-
-        StartCoroutine(ww.PostRequest(Config.serverUrl, postData,
-            (response) =>
-            {
-                mIf.text = response; // Успешный ответ
-                drowField(response);
-            },
-            (error) =>
-            {
-                mIf.text = "Error: " + error;
-                UnityEngine.Debug.Log(error);
-            }
-        ));
-    }*/
 }

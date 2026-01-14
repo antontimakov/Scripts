@@ -12,16 +12,22 @@ namespace Catatonia.Application
         Vector2 offset;
         Vector2 nullVector;
         Vector2 offsetCell;
-        Main mainOo;
+        Main mainObj;
+
+        /// <summary>
+        /// Экземпляр класса GameField
+        /// </summary>
+        GameField gameFieldObj;
         float cellSize = 2f; // размер клетки
 
-        public DragAndDrop(Main mainO)
+        public DragAndDrop(Main mainObj, GameField gameFieldObj)
         {
             state = State.none;
             item = null;
             nullVector = Camera.main.ScreenToWorldPoint(new Vector2(0f, Screen.height));
             offsetCell = new Vector2(1.1f, -1.1f);
-            mainOo = mainO;
+            this.mainObj = mainObj;
+            this.gameFieldObj = gameFieldObj;
         }
         public void Action()
         {
@@ -97,8 +103,8 @@ namespace Catatonia.Application
             item = null;*/
 
             // заменяет элемент по которому кликнули на траву
-            //mainOo.chObj(mainOo.grassPrefab, item);
-            //mainOo.setServerWin(item.transform);
+            //mainObj.chObj(mainObj.grassPrefab, item);
+            gameFieldObj.setServerWin(item.transform);
             state = State.none;
         }
 

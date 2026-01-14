@@ -16,16 +16,12 @@ public class ActiveItem
     /// Ссылка на кнопку активного в данный момент элемента
     /// </summary>
     private Button bActiveItem;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public Sprite sGrass;
     public ActiveItem(Main mainObj)
     {
         this.mainObj = mainObj;
         oActiveItem = GameObject.Find("ActiveItemButton");
         bActiveItem = oActiveItem.GetComponent<Button>();
+        hideActiveItem();
     }
 
     private void showActiveItem() {
@@ -35,10 +31,9 @@ public class ActiveItem
     public void hideActiveItem() {
         oActiveItem.SetActive(false);
     }
-    public void SetActiveItem()
+    public void SetActiveItem(Sprite CurrentSprite)
     {
         showActiveItem();
-        // TODO вынести в параметр
-        bActiveItem.GetComponent<Image>().sprite = sGrass;
+        bActiveItem.GetComponent<Image>().sprite = CurrentSprite;
     }
 }
