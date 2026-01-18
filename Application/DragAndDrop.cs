@@ -102,9 +102,8 @@ namespace Catatonia.Application
             item.transform.position = calcCellPosition(getClickPosition());
             item = null;*/
 
-            // заменяет элемент по которому кликнули на траву
             //mainObj.chObj(mainObj.grassPrefab, item);
-            gameFieldObj.setServerWin(item.transform);
+            gameFieldObj.defineClickAction(item);
             state = State.none;
         }
 

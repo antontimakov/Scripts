@@ -123,7 +123,7 @@ public class Main : MonoBehaviour
     /// </summary>
     /// <param name="newObj">Заменяющий объект</param>
     /// <param name="oldObj">Заменяемый объект</param>
-    public void mainChangeObj(GameObject newObj, GameObject oldObj)
+    public void mainChangeObj(GameObject oldObj, GameObject newObj)
     {
         Instantiate(newObj, oldObj.transform.position, Quaternion.identity);
         Destroy(oldObj);

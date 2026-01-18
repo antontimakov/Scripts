@@ -60,7 +60,6 @@ public class GameField
             {
                 Vector2 position = new Vector2(elem.x, elem.y);
                 GameObject newObj = mainObj.mainCopyObj(prefab, position, elem);
-                //UnityEngine.Debug.Log(newObj.GetComponent<DataDb>().serverData.elem_name);
             }
             else
             {
@@ -88,21 +87,31 @@ public class GameField
     /// <summary>
     /// Отправляет данные на сервер
     /// </summary>
-    public void setServerWin(Transform itemTransform)
+    public void defineClickAction(GameObject obj)
     {
-        ElemModel jsonData = new(){
-            elem_id = 1,
-            elem_name = "grass",
+        ElemModel data = obj.GetComponent<DataDb>().serverData;
+        if (data.elem_weed)
+        {
+            string oldElemName = data.elem_name;
+            string newElemName = "ground";
+            mainObj.mainChangeObj(obj, groundPrefab);
+            SetServer(obj.transform, oldElemName, newElemName);
+        }
+    }
+    private void SetServer(Transform itemTransform, string oldElemName, string newElemName)
+    {
+        ClickModel jsonData = new(){
+            old_elem_name = oldElemName,
+            new_elem_name = newElemName,
             x = (int)itemTransform.position.x,
             y = (int)itemTransform.position.y
         };
         string postData = JsonUtility.ToJson(jsonData);
-                //UnityEngine.Debug.Log(postData);
         mainObj.StartCoroutine(serverObj.PostRequest(Config.serverUrl2, postData,
             (response) =>
             {
                 // Успешный ответ
-                //UnityEngine.Debug.Log(response);
+                UnityEngine.Debug.Log(response);
                 //response;
             },
             (error) =>
