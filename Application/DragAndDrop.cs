@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Catatonia;
 using Catatonia.Application.Models;
 
@@ -87,12 +88,12 @@ namespace Catatonia.Application
 
         bool isMouseButtonPressed()
         {
-            return Input.GetMouseButton(0);
+            return Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
         }
 
         Vector2 getClickPosition()
         {
-            return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            return Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         }
 
         Transform GetItemAt(Vector2 position)

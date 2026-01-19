@@ -1,5 +1,6 @@
 // Application/Zoom.cs
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Catatonia.Application;
 public class Zoom
@@ -23,35 +24,38 @@ public class Zoom
     }
     public void zoomGameField()
     {
-        // Проверяем, зажата ли левая кнопка мыши
-        if (Input.GetMouseButtonDown(0))
+        if (Mouse.current != null)
         {
-            // Запоминаем начальную позицию мыши
-            startMousePos = Input.mousePosition;
-        }
-        else if (Input.GetMouseButton(0))
-        {
-            // Рассчитываем разницу в положении мыши в двухмерных координатах
-            Vector2 delta = (Vector2)Input.mousePosition - startMousePos;
+            // Проверяем, зажата ли левая кнопка мыши
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                // Запоминаем начальную позицию мыши
+                startMousePos = Mouse.current.position.ReadValue();
+            }
+            else if (Mouse.current.leftButton.isPressed)
+            {
+                Vector2 currentPos = Mouse.current.position.ReadValue();
+                // Рассчитываем разницу в положении мыши в двухмерных координатах
+                Vector2 delta = currentPos - startMousePos;
 
-            // Направление движения камеры (обратное направление мыши)
-            Vector2 moveDirection = delta;
+                // Направление движения камеры (обратное направление мыши)
+                Vector2 moveDirection = delta;
 
-            // Смещаем камеру против направления мыши
-            cam.transform.Translate(-moveDirection.normalized * panSpeed, Space.World);
+                // Смещаем камеру против направления мыши
+                cam.transform.Translate(-delta.normalized * panSpeed, Space.World);
 
-            // Обновляем стартовую позицию мыши
-            startMousePos = Input.mousePosition;
-        }
+                // Обновляем стартовую позицию мыши
+                startMousePos = currentPos;
+            }
 
-        float scrollValue = Input.mouseScrollDelta.y;
 
-        if (scrollValue != 0)
-        {
-            // Изменяем ортографический размер камеры
-            cam.orthographicSize -= scrollValue * zoomSpeed; //  * Time.deltaTime
-            // Ограничиваем диапазон размеров
-            cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minSize, maxSize);
+            // Масштабирование через колесо мыши
+            Vector2 scrollDelta = Mouse.current.scroll.ReadValue();
+            if (scrollDelta.y != 0f)
+            {
+                float newSize = cam.orthographicSize - scrollDelta.y * zoomSpeed;
+                cam.orthographicSize = Mathf.Clamp(newSize, minSize, maxSize);
+            }
         }
     }
 }
