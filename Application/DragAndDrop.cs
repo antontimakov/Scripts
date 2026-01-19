@@ -1,7 +1,9 @@
 // DragAndDrop.cs
 using System;
+using System.Globalization;
 using UnityEngine;
 using Catatonia;
+using Catatonia.Application.Models;
 
 namespace Catatonia.Application
 {
@@ -37,6 +39,36 @@ namespace Catatonia.Application
                     if (isMouseButtonPressed())
                     {
                         pickup();
+                    }
+                    else
+                    {
+                        // TODO вынести в отдельный метод
+                        Vector2 currentPosition = getClickPosition();
+                        Transform currentItem = GetItemAt(currentPosition);
+                        if (currentItem == null)
+                        {
+                            mainObj.mIf.text = "";
+                            return;
+                        }
+                        ElemModel serverData = currentItem.GetComponent<DataDb>().serverData;
+                        if (serverData.updated_modefied.HasValue)
+                        {
+                            DateTime increasedUpdated = serverData.updated_modefied.Value.AddSeconds(serverData.elem_lifetime);
+                            if (increasedUpdated > DateTime.UtcNow)
+                            {
+                                //mainObj.mIf.text = (increasedUpdated - DateTime.UtcNow).ToString();
+                                var deltaTime = increasedUpdated - DateTime.UtcNow;
+                                mainObj.mIf.text = string.Format("{0:D2}h:{1:D2}m:{2:D2}s", 
+                                    deltaTime.Hours, 
+                                    deltaTime.Minutes, 
+                                    deltaTime.Seconds);
+
+                            }
+                        }
+                        else
+                        {
+                            mainObj.mIf.text = "";
+                        }
                     }
                     break;
 

@@ -1,4 +1,6 @@
 // Application/GameField.cs
+using System;
+using System.Globalization;
 using UnityEngine;
 using Catatonia.Application.Models;
 
@@ -7,7 +9,6 @@ public class GameField
 {
     public GameObject grassPrefab;
     public GameObject groundPrefab;
-    public GameObject grainPrefab;
 
     private Main mainObj;
     private WebServer serverObj;
@@ -18,7 +19,6 @@ public class GameField
         this.serverObj = serverObj;
         groundPrefab = Resources.Load<GameObject>("Prefabs/ground");
         grassPrefab = Resources.Load<GameObject>("Prefabs/grass");
-        grainPrefab = Resources.Load<GameObject>("Prefabs/magic_plant");
         getDataAndDrowField();
         
     }
@@ -47,14 +47,23 @@ public class GameField
         
         foreach (ElemModel elem in result.received)
         {
-            GameObject prefab = null;
-
-            switch (elem.elem_name)
+            if (DateTime.TryParse(elem.updated, null, DateTimeStyles.RoundtripKind, out DateTime updatedTime))
             {
-                    case "magic_plant": prefab = grainPrefab; break;
-                    case "grass": prefab = grassPrefab; break;
-                    case "ground": prefab = groundPrefab; break;
+                UnityEngine.Debug.Log(updatedTime);
+                elem.updated_modefied = updatedTime;
             }
+            else
+            {
+                UnityEngine.Debug.Log("Не удалось преобразовать строку в DateTime");
+            }
+
+            string grain = "";
+            // Проверка, что элемент ещё живой
+            if (updatedTime.AddSeconds(elem.elem_lifetime) > DateTime.UtcNow)
+            {
+                grain = "_grain";
+            }
+            GameObject prefab = Resources.Load<GameObject>("Prefabs/" + elem.elem_name + grain);
 
             if (prefab != null)
             {
@@ -71,17 +80,6 @@ public class GameField
         mIf.text = myObject.time_fishing;
         string format = "yyyy-MM-dd\\THH:mm:ss.fffff";
         result1 = DateTime.ParseExact(myObject.time_fishing, format, CultureInfo.InvariantCulture);*/
-
-        //Vector2 offset2 = go.transform.position;
-        /*Vector2 offset2 = new();
-        offset2.x = 0;
-        offset2.y = 0;
-        Instantiate(go, offset2, Quaternion.identity);
-        offset2.x = 2f;
-        offset2.y = 0;
-        Instantiate(go2, offset2, Quaternion.identity);*/
-        //reppeatRight(GameObject.Find("grass"), 10);
-        //reppeatRight(GameObject.Find("ground"), 10);
     }
 
     /// <summary>
@@ -95,6 +93,24 @@ public class GameField
             string oldElemName = data.elem_name;
             string newElemName = "ground";
             mainObj.mainChangeObj(obj, groundPrefab);
+            SetServer(obj.transform, oldElemName, newElemName);
+        }
+        else if (data.elem_plantable)
+        {
+            string oldElemName = data.elem_name;
+            string newElemName = mainObj.activeItemObj.ActiveSpriteName;
+            GameObject prefab = Resources.Load<GameObject>("Prefabs/" + newElemName + "_grain");
+            if (prefab != null)
+            {
+                mainObj.mainChangeObj(obj, prefab);
+                SetServer(obj.transform, oldElemName, newElemName);
+            }
+        }
+        else if (data.elem_harvestable)
+        {
+            string oldElemName = data.elem_name;
+            string newElemName = "grass";
+            mainObj.mainChangeObj(obj, grassPrefab);
             SetServer(obj.transform, oldElemName, newElemName);
         }
     }

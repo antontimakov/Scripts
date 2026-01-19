@@ -19,7 +19,7 @@ public class Main : MonoBehaviour
     /// <summary>
     /// Ссылка на основнное статическое поле для ввода
     /// </summary>
-    TextMeshProUGUI mIf;
+    public TextMeshProUGUI mIf;
 
     /// <summary>
     /// Ссылка на основную кнопку
@@ -55,7 +55,7 @@ public class Main : MonoBehaviour
     /// <summary>
     /// Экземпляр класса ActiveItem
     /// </summary>
-    ActiveItem activeItemObj;
+    public ActiveItem activeItemObj;
 
     /// <summary>
     /// Экземпляр класса Zoom

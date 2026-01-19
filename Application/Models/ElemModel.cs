@@ -16,5 +16,8 @@ namespace Catatonia.Application.Models
         public bool elem_plantable;
         public bool elem_harvestable;
         public bool elem_weed;
+        public int elem_lifetime;
+        public string updated;
+        public DateTime? updated_modefied;
     }
 }

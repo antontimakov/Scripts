@@ -16,6 +16,11 @@ public class ActiveItem
     /// Ссылка на кнопку активного в данный момент элемента
     /// </summary>
     private Button bActiveItem;
+
+    /// <summary>
+    /// наименование активного спрайта
+    /// </summary>
+    public string ActiveSpriteName { get; set; }
     public ActiveItem(Main mainObj)
     {
         this.mainObj = mainObj;
@@ -31,8 +36,9 @@ public class ActiveItem
     public void hideActiveItem() {
         oActiveItem.SetActive(false);
     }
-    public void SetActiveItem(Sprite CurrentSprite)
+    public void SetActiveItem(Sprite CurrentSprite, string spriteName)
     {
+        ActiveSpriteName = spriteName;
         showActiveItem();
         bActiveItem.GetComponent<Image>().sprite = CurrentSprite;
     }

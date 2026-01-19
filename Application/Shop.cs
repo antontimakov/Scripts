@@ -59,22 +59,24 @@ public class Shop
 
         foreach (Button btn in shopButtons)
         {
-            string spritePath = "Sprites/" + spriteNames[i++];
-            Sprite CurrentSprite = Resources.Load<Sprite>(spritePath);
-            if (CurrentSprite != null)
+            string spritePath = "Sprites/" + spriteNames[i];
+            string spriteName = spriteNames[i];
+            Sprite sprite = Resources.Load<Sprite>(spritePath);
+            if (sprite != null)
             {
-                btn.GetComponent<Image>().sprite = CurrentSprite;
-                btn.onClick.AddListener(() => {SetActiveItem(CurrentSprite);});
+                btn.GetComponent<Image>().sprite = sprite;
+                btn.onClick.AddListener(() => {SetActiveItem(sprite, spriteName);});
             }
+            ++i;
         }
     }
 
     private void hideShop() {
         wShop.SetActive(false);
     }
-    private void SetActiveItem(Sprite CurrentSprite)
+    private void SetActiveItem(Sprite sprite, string spriteName)
     {
-        activeItemObj.SetActiveItem(CurrentSprite);
+        activeItemObj.SetActiveItem(sprite, spriteName);
         hideShop();
     }
 }
