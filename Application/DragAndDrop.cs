@@ -41,6 +41,7 @@ namespace Catatonia.Application
                     {
                         pickup();
                     }
+                    // Наводим мышь
                     else
                     {
                         // TODO вынести в отдельный метод
@@ -51,19 +52,26 @@ namespace Catatonia.Application
                             mainObj.mIf.text = "";
                             return;
                         }
-                        ElemModel serverData = currentItem.GetComponent<DataDb>().serverData;
-                        if (serverData.updated_modefied.HasValue)
-                        {
-                            DateTime increasedUpdated = serverData.updated_modefied.Value.AddSeconds(serverData.elem_lifetime);
-                            if (increasedUpdated > DateTime.UtcNow)
+                        DataDb dataDbObj = currentItem.GetComponent<DataDb>();
+                        if (dataDbObj != null){
+                            ElemModel serverData = dataDbObj.serverData;
+                            if (serverData != null && serverData.updated_modefied.HasValue)
                             {
-                                //mainObj.mIf.text = (increasedUpdated - DateTime.UtcNow).ToString();
-                                var deltaTime = increasedUpdated - DateTime.UtcNow;
-                                mainObj.mIf.text = string.Format("{0:D2}h:{1:D2}m:{2:D2}s", 
-                                    deltaTime.Hours, 
-                                    deltaTime.Minutes, 
-                                    deltaTime.Seconds);
+                                DateTime increasedUpdated = serverData.updated_modefied.Value.AddSeconds(serverData.elem_lifetime);
+                                if (increasedUpdated > DateTime.UtcNow)
+                                {
+                                    //mainObj.mIf.text = (increasedUpdated - DateTime.UtcNow).ToString();
+                                    var deltaTime = increasedUpdated - DateTime.UtcNow;
+                                    mainObj.mIf.text = string.Format("{0:D2}h:{1:D2}m:{2:D2}s", 
+                                        deltaTime.Hours, 
+                                        deltaTime.Minutes, 
+                                        deltaTime.Seconds);
 
+                                }
+                            }
+                            else
+                            {
+                                mainObj.mIf.text = "";
                             }
                         }
                         else

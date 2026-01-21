@@ -95,8 +95,6 @@ public class Main : MonoBehaviour
 
         mB = GameObject.Find("MainButton").GetComponent<Button>();
         mIf = GameObject.Find("MainText").GetComponent<TextMeshProUGUI>();
-
-        //result1 = DateTime.Now;
     }
 
     /// <summary>
@@ -123,9 +121,20 @@ public class Main : MonoBehaviour
     /// </summary>
     /// <param name="newObj">Заменяющий объект</param>
     /// <param name="oldObj">Заменяемый объект</param>
-    public void mainChangeObj(GameObject oldObj, GameObject newObj)
+    public void mainChangeObj(GameObject oldObj, GameObject newObj, ElemModel data = null)
     {
-        Instantiate(newObj, oldObj.transform.position, Quaternion.identity);
+        newObj = Instantiate(newObj, oldObj.transform.position, Quaternion.identity);
+        
+        if (data != null)
+        {
+            var comp = newObj.AddComponent<DataDb>();
+            comp.serverData = data;
+        }
+        else
+        {
+            UnityEngine.Debug.Log("Data is null");
+        }
+
         Destroy(oldObj);
     }
 
@@ -134,9 +143,6 @@ public class Main : MonoBehaviour
     /// </summary>
     void Update()
     {
-        //DateTime localDate = DateTime.Now;
-        //TimeSpan deltaTime = result1 - localDate;
-        //mIf.text = deltaTime.Hours.ToString() + " h " + deltaTime.Minutes.ToString() + " m " + deltaTime.Seconds.ToString() + " s";
         dad.Action();
         zoomObj.zoomGameField();
     }

@@ -49,7 +49,7 @@ public class GameField
         {
             if (DateTime.TryParse(elem.updated, null, DateTimeStyles.RoundtripKind, out DateTime updatedTime))
             {
-                UnityEngine.Debug.Log(updatedTime);
+                //UnityEngine.Debug.Log(updatedTime);
                 elem.updated_modefied = updatedTime;
             }
             else
@@ -87,31 +87,80 @@ public class GameField
     /// </summary>
     public void defineClickAction(GameObject obj)
     {
-        ElemModel data = obj.GetComponent<DataDb>().serverData;
-        if (data.elem_weed)
-        {
-            string oldElemName = data.elem_name;
-            string newElemName = "ground";
-            mainObj.mainChangeObj(obj, groundPrefab);
-            SetServer(obj.transform, oldElemName, newElemName);
-        }
-        else if (data.elem_plantable)
-        {
-            string oldElemName = data.elem_name;
-            string newElemName = mainObj.activeItemObj.ActiveSpriteName;
-            GameObject prefab = Resources.Load<GameObject>("Prefabs/" + newElemName + "_grain");
-            if (prefab != null)
+        DataDb dataDbObj = obj.GetComponent<DataDb>();
+        if (dataDbObj != null){
+            ElemModel data = dataDbObj.serverData;
+            if (data != null){
+                if (data.elem_weed)
+                {
+                    string oldElemName = data.elem_name;
+                    string newElemName = "ground";
+                    ElemModel newData = new ElemModel()
+                    {
+                        elem_name = newElemName,
+                        x = data.x,
+                        y = data.y,
+                        elem_plantable = true,
+                        elem_harvestable = false,
+                        elem_weed = false,
+                        elem_lifetime = 0,
+                        updated = "",
+                        updated_modefied = DateTime.Now
+                    };
+                    mainObj.mainChangeObj(obj, groundPrefab, newData);
+                    SetServer(obj.transform, oldElemName, newElemName);
+                }
+                else if (data.elem_plantable)
+                {
+                    string oldElemName = data.elem_name;
+                    string newElemName = mainObj.activeItemObj.ActiveSpriteName;
+                    ElemModel newData = new ElemModel()
+                    {
+                        elem_name = newElemName,
+                        x = data.x,
+                        y = data.y,
+                        elem_plantable = false,
+                        elem_harvestable = true,
+                        elem_weed = false,
+                        elem_lifetime = 60,
+                        updated = "",
+                        updated_modefied = DateTime.Now
+                    };
+                    GameObject prefab = Resources.Load<GameObject>("Prefabs/" + newElemName + "_grain");
+                    if (prefab != null)
+                    {
+                        mainObj.mainChangeObj(obj, prefab);
+                        SetServer(obj.transform, oldElemName, newElemName);
+                    }
+                }
+                else if (data.elem_harvestable)
+                {
+                    string oldElemName = data.elem_name;
+                    string newElemName = "grass";
+                    ElemModel newData = new ElemModel()
+                    {
+                        elem_name = newElemName,
+                        x = data.x,
+                        y = data.y,
+                        elem_plantable = false,
+                        elem_harvestable = true,
+                        elem_weed = true,
+                        elem_lifetime = 0,
+                        updated = "",
+                        updated_modefied = DateTime.Now
+                    };
+                    mainObj.mainChangeObj(obj, grassPrefab, newData);
+                    SetServer(obj.transform, oldElemName, newElemName);
+                }
+            }
+            else
             {
-                mainObj.mainChangeObj(obj, prefab);
-                SetServer(obj.transform, oldElemName, newElemName);
+                UnityEngine.Debug.Log("data is null");
             }
         }
-        else if (data.elem_harvestable)
+        else
         {
-            string oldElemName = data.elem_name;
-            string newElemName = "grass";
-            mainObj.mainChangeObj(obj, grassPrefab);
-            SetServer(obj.transform, oldElemName, newElemName);
+            UnityEngine.Debug.Log("dataDbObj is null");
         }
     }
     private void SetServer(Transform itemTransform, string oldElemName, string newElemName)
@@ -127,7 +176,7 @@ public class GameField
             (response) =>
             {
                 // Успешный ответ
-                UnityEngine.Debug.Log(response);
+                //UnityEngine.Debug.Log(response);
                 //response;
             },
             (error) =>
