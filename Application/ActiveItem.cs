@@ -26,6 +26,7 @@ public class ActiveItem
         this.mainObj = mainObj;
         oActiveItem = GameObject.Find("ActiveItemButton");
         bActiveItem = oActiveItem.GetComponent<Button>();
+        bActiveItem.onClick.AddListener(hideActiveItem);
         hideActiveItem();
     }
 
