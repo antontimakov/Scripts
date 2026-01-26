@@ -54,7 +54,7 @@ namespace Catatonia.Application
                         }
                         DataDb dataDbObj = currentItem.GetComponent<DataDb>();
                         if (dataDbObj != null){
-                            ElemModel serverData = dataDbObj.serverData;
+                            FillFieldDbr serverData = dataDbObj.serverData;
                             if (serverData != null && serverData.updated_modefied.HasValue)
                             {
                                 DateTime increasedUpdated = serverData.updated_modefied.Value.AddSeconds(serverData.elem_lifetime);

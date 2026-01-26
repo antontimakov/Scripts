@@ -102,7 +102,7 @@ public class Main : MonoBehaviour
     /// </summary>
     /// <param name="oldObj"></param>
     /// <param name="position"></param>
-    public GameObject mainCopyObj(GameObject prefab, Vector2 position, ElemModel data = null)
+    public GameObject mainCopyObj(GameObject prefab, Vector2 position, FillFieldDbr data = null)
     {
         GameObject obj = Instantiate(prefab, position, Quaternion.identity);
         
@@ -121,7 +121,7 @@ public class Main : MonoBehaviour
     /// </summary>
     /// <param name="newObj">Заменяющий объект</param>
     /// <param name="oldObj">Заменяемый объект</param>
-    public void mainChangeObj(GameObject oldObj, GameObject newObj, ElemModel data = null)
+    public void mainChangeObj(GameObject oldObj, GameObject newObj, FillFieldDbr data = null)
     {
         newObj = Instantiate(newObj, oldObj.transform.position, Quaternion.identity);
         

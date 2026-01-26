@@ -1,4 +1,4 @@
-// Application/Models/ElemModel.cs
+// Application/Models/FillFieldDbr.cs
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace Catatonia.Application.Models
 {
     [System.Serializable]
-    public class ElemModel
+    public class FillFieldDbr
     {
         public string elem_name;
         public int x;

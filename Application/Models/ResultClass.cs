@@ -4,10 +4,10 @@ using System;
 namespace Catatonia.Application.Models
 {
     [System.Serializable]
-    public class ResultClass
+    public class ResultClass<T>
     {
         public string time;
         public string status;
-        public ElemModel[] received;
+        public T received;
     }
 }

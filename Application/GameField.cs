@@ -43,9 +43,22 @@ public class GameField
     /// </summary>
     public void drowField(string fromServer)
     {
-        ResultClass result = JsonUtility.FromJson<ResultClass>(fromServer);
+        ResultClass<StartModel> result = JsonUtility.FromJson<ResultClass<StartModel>>(fromServer);
+
+        if (result == null)
+        {
+            UnityEngine.Debug.Log("result is null");
+        }
+        if (result.received == null)
+        {
+            UnityEngine.Debug.Log("result.received is null");
+        }
+        if (result.received.fieldElements == null)
+        {
+            UnityEngine.Debug.Log("result.received.fieldElements is null");
+        }
         
-        foreach (ElemModel elem in result.received)
+        foreach (FillFieldDbr elem in result.received.fieldElements)
         {
             if (DateTime.TryParse(elem.updated, null, DateTimeStyles.RoundtripKind, out DateTime updatedTime))
             {
@@ -84,14 +97,14 @@ public class GameField
     {
         DataDb dataDbObj = obj.GetComponent<DataDb>();
         if (dataDbObj != null){
-            ElemModel data = dataDbObj.serverData;
+            FillFieldDbr data = dataDbObj.serverData;
             if (data != null){
                 GameObject oActiveItem = GameObject.Find("ActiveItemButton");
                 if (data.elem_weed)
                 {
                     string oldElemName = data.elem_name;
                     string newElemName = "ground";
-                    ElemModel newData = new ElemModel()
+                    FillFieldDbr newData = new FillFieldDbr()
                     {
                         elem_name = newElemName,
                         x = data.x,
@@ -110,7 +123,7 @@ public class GameField
                 {
                     string oldElemName = data.elem_name;
                     string newElemName = mainObj.activeItemObj.ActiveSpriteName;
-                    ElemModel newData = new ElemModel()
+                    FillFieldDbr newData = new FillFieldDbr()
                     {
                         elem_name = newElemName,
                         x = data.x,
@@ -136,7 +149,7 @@ public class GameField
                     {
                         string oldElemName = data.elem_name;
                         string newElemName = "grass";
-                        ElemModel newData = new ElemModel()
+                        FillFieldDbr newData = new FillFieldDbr()
                         {
                             elem_name = newElemName,
                             x = data.x,
