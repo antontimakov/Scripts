@@ -5,6 +5,6 @@ using System;
 [System.Serializable]
 public class UserModel
 {
-    public int UserId { get; set; }
-    public int Gold { get; set; }
+    public int UserId;
+    public int Gold;
 }

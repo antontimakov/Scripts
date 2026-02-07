@@ -7,8 +7,8 @@ namespace Catatonia.Application.Models;
 [System.Serializable]
 public class ClickModel
 {
-    public string old_elem_name;
-    public string new_elem_name;
-    public int x;
-    public int y;
+    public string OldElemName;
+    public string NewElemName;
+    public int X;
+    public int Y;
 }

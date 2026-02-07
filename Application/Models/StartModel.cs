@@ -5,6 +5,6 @@ using System;
 [System.Serializable]
 public class StartModel
 {
-    public FillFieldDbr[] fieldElements;
-    public UserModel[] userInfo;
+    public FillFieldDbr[] FieldElements;
+    public UserModel[] UserInfo;
 }

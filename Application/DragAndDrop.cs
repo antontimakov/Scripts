@@ -55,9 +55,9 @@ namespace Catatonia.Application
                         DataDb dataDbObj = currentItem.GetComponent<DataDb>();
                         if (dataDbObj != null){
                             FillFieldDbr serverData = dataDbObj.serverData;
-                            if (serverData != null && serverData.updated_modefied.HasValue)
+                            if (serverData != null && serverData.UpdatedAtModefied.HasValue)
                             {
-                                DateTime increasedUpdated = serverData.updated_modefied.Value.AddSeconds(serverData.elem_lifetime);
+                                DateTime increasedUpdated = serverData.UpdatedAtModefied.Value.AddSeconds(serverData.Lifetime);
                                 if (increasedUpdated > DateTime.UtcNow)
                                 {
                                     //mainObj.mIf.text = (increasedUpdated - DateTime.UtcNow).ToString();

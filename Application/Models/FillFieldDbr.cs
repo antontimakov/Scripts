@@ -8,14 +8,14 @@ namespace Catatonia.Application.Models
     [System.Serializable]
     public class FillFieldDbr
     {
-        public string elem_name;
-        public int x;
-        public int y;
-        public bool elem_plantable;
-        public bool elem_harvestable;
-        public bool elem_weed;
-        public int elem_lifetime;
-        public string updated;
-        public DateTime? updated_modefied;
+        public string Name;
+        public int X;
+        public int Y;
+        public bool IsPlantable;
+        public bool IsHarvestable;
+        public bool IsWeed;
+        public int Lifetime;
+        public string UpdatedAt;
+        public DateTime? UpdatedAtModefied;
     }
 }
